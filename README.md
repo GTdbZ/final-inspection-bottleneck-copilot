@@ -1,31 +1,56 @@
-﻿# Final Inspection Bottleneck Copilot
+# Final Inspection Bottleneck Copilot v0.1
 
-A Python-based manufacturing analytics demo for identifying bottlenecks in final inspection.
+## Project Overview
 
-## What it does
+This project is a beginner-friendly PCB manufacturing data analysis portfolio project.
 
-This project analyzes mock final inspection data and generates:
+The goal is to use Python, pandas, and AI-assisted vibe coding to analyze synthetic PCB final inspection data and identify possible bottleneck signals.
 
-- Average wait time by station
-- Top defect types excluding pass records
-- Rework rate by station
-- Maximum bottleneck station
-- Copilot-style operational recommendations
+This project uses 100% synthetic data. No company data or confidential manufacturing data is used.
 
-## Sample Result
+## Background
 
-The current mock dataset shows that FI-Recheck is the primary bottleneck, with an average queue delay of 80.0 minutes.
+In PCB manufacturing, final inspection and AOI data can be used to monitor:
 
-The most frequent defect type is scratch, suggesting a need to inspect handling trays and mechanical conveyor belts for abrasion surfaces.
+- Lot-level defect rate
+- Station-level defect trend
+- Shift-level risk
+- Delay hours
+- Potential bottleneck station
 
-## Why this project matters
+This v0.1 project focuses on a simple but explainable workflow:
 
-In manufacturing operations, final inspection bottlenecks can delay shipment, increase WIP, and hide repeated quality issues.
+Synthetic lot data → pandas DataFrame → defect rate calculation → station / shift summary → chart → bottleneck candidate.
 
-This project demonstrates how Python can be used to turn inspection records into practical operational insights.
+## Dataset
 
-## Data Safety
+The synthetic dataset includes the following fields:
 
-This project uses mock data only.
+- lot_id
+- station
+- shift
+- input_qty
+- defect_qty
+- defect_type
+- delay_hours
+- defect_rate
+- defect_rate_percent
+- defect_rate_label
 
-No company confidential data is used.
+## Formula
+
+The basic defect rate formula is:
+
+```python
+defect_rate = defect_qty / input_qty
+defect_rate_percent = defect_rate * 100
+```
+## Chart Outputs
+
+This project generates chart outputs under the `reports/` folder:
+
+- `delay_hours_by_station.png`: compares total delay hours by station as a bottleneck proxy.
+- `defect_type_ranking.png`: ranks defect types by total defect quantity.
+- `station_defect_rate_chart.png`: compares station-level defect rates.
+
+All charts are generated from synthetic mock final inspection data only. No company, customer, product, yield, capacity, or internal production data is used.
