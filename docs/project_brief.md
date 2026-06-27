@@ -1,16 +1,54 @@
-# Project Brief: Final Inspection Bottleneck Copilot
+# Project Brief
 
-## Overview
-In high-volume manufacturing environments (e.g., PCB assembly, semiconductor packaging), the final inspection phase is critical for quality control. However, final inspection can easily become a bottleneck due to uneven arrival rates, varying inspection times, operator scheduling, or high rework rates.
+## Project Name
 
-The **Final Inspection Bottleneck Copilot** is a manufacturing analytics assistant designed to process inspection records, highlight bottlenecks, identify defect trends, analyze queue/waiting times, and suggest corrective actions for line supervisors.
+Final Inspection Bottleneck Copilot
 
-## Key Objectives
-1. **Identify Bottlenecks:** Analyze average wait times (`wait_time_min`) across different inspection stations (`FI-AOI`, `FI-VI`, `FI-Packing`, `FI-Recheck`) to pinpoint where delays accumulate.
-2. **Detect Defect Trends:** Track defect occurrences (`defect_type`) to help quality engineers identify recurring process failures (e.g., contamination, open/shorts).
-3. **Optimize Rework Cycles:** Evaluate how rework rates (`rework_flag`) affect overall queueing times and throughput.
-4. **Actionable Insights:** Generate automatic recommendations (e.g., reallocating operators, adjusting machine calibration) based on thresholds.
+## Goal
 
-## Scope & Implementation
-- **Mock Data Platform:** Built entirely on synthetic data to simulate real production runs without exposing proprietary manufacturing information.
-- **Analytics Engine:** Intended to run locally using standard Python libraries (`pandas`, `matplotlib`, `seaborn`) or lightweight notebook interfaces.
+This project demonstrates a small AI-assisted manufacturing data analysis workflow using Python, pandas, and synthetic PCB inspection data.
+
+The goal is to show how a portfolio project can identify inspection bottleneck signals, summarize defect patterns, and generate simple visual outputs without using confidential data.
+
+## Current Scope
+
+The current scope includes:
+
+- Reading synthetic PCB inspection data
+- Calculating defect rates
+- Comparing AOI and Final Inspection
+- Ranking synthetic defect types
+- Using delay_hours as a bottleneck proxy
+- Generating chart outputs for portfolio review
+
+## Outputs
+
+The project generates chart outputs such as:
+
+- defect type ranking
+- delay by station
+- station defect rate comparison
+
+## Data Safety
+
+This project is designed for public portfolio use.
+
+It uses synthetic or mock data only and must not include:
+
+- company data
+- customer names
+- product names
+- part numbers
+- real yield data
+- real capacity data
+- internal production data
+- API keys
+- passwords
+- tokens
+- credentials
+
+## Portfolio Positioning
+
+This project is positioned as a compact manufacturing analytics capstone.
+
+It connects the user's PCB background with entry-level AI, data analysis, and automation skills while keeping the dataset safe, public, and reproducible.
