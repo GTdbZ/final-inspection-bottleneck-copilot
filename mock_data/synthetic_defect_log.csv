@@ -1,0 +1,6 @@
+lot_id,station,shift,input_qty,defect_qty,defect_type,delay_hours,defect_rate,defect_rate_percent,defect_rate_label
+LOT-FI-001,Final Inspection,Day,500,25,scratch,1.5,0.05,5.0,5.0%
+LOT-AOI-002,AOI,Night,800,56,open,2.0,0.07,7.0,7.0%
+LOT-FI-003,Final Inspection,Night,1000,80,dent,3.5,0.08,8.0,8.0%
+LOT-AOI-004,AOI,Day,600,18,short,0.5,0.03,3.0,3.0%
+LOT-FI-005,Final Inspection,Day,700,49,scratch,2.5,0.07,7.0,7.0%

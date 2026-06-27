@@ -1,5 +1,26 @@
-.venv/
+
+# Python cache
 __pycache__/
-*.pyc
-.env
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Local backups
+*.bak
+*.bak_*
+README.backup.*.md
+
+# Environment / secrets
+.env
+*.env
+secrets.*
