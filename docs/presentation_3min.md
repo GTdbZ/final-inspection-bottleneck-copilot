@@ -12,7 +12,7 @@
 
 我的背景是 PCB / PDE 製造工程，平常會接觸到 lot、站點、缺陷、交期延遲、終檢瓶頸等問題。
 
-我想用這個作品展示我如何把製造現場經驗轉成資料分析流程，也展示我正在學習 Python、pandas 和 AI-assisted vibe coding。
+我想用這個作品展示我如何把製造現場經驗轉成資料分析流程，也展示我正在學習 Python、pandas 和 AI-assisted development。
 
 ## 3. Dataset and Method
 
@@ -53,7 +53,7 @@ defect_rate = defect_qty / input_qty
 - CSV 匯出
 - matplotlib 圖表
 - README 文件整理
-- AI-assisted vibe coding reviewer 流程
+- AI-assisted code review 流程
 
 我不是單純請 AI 幫我寫 code，而是用工程驗收的方式檢查公式、欄位命名、資料是否為 synthetic data，以及分析結果是否合理。
 
@@ -62,4 +62,3 @@ defect_rate = defect_qty / input_qty
 v0.2 已加入 synthetic mock datasets、station / shift summary 與 defect_type ranking chart，讓分析更接近製造現場常見的異常分類與瓶頸判讀。
 
 v0.2 目前先聚焦在可解釋、可展示、可口頭說明的最小版本。
-

@@ -4,7 +4,7 @@
 
 This project is a beginner-friendly PCB manufacturing data analysis portfolio project.
 
-The goal is to use Python, pandas, and AI-assisted vibe coding to analyze synthetic PCB final inspection data and identify possible bottleneck signals.
+The goal is to use Python, pandas, and AI-assisted development to analyze synthetic PCB final inspection data and identify possible bottleneck signals.
 
 This project uses 100% synthetic data. No company data or confidential manufacturing data is used.
 
@@ -54,4 +54,3 @@ This project generates chart outputs under the `reports/` folder:
 - `station_defect_rate_chart.png`: compares station-level defect rates.
 
 All charts are generated from synthetic mock final inspection data only. No company, customer, product, yield, capacity, or internal production data is used.
-
