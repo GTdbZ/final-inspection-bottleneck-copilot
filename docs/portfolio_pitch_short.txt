@@ -1,5 +1,5 @@
-Final Inspection Bottleneck Copilot v0.1
-GitHub: https://github.com/GTdbZ/final-inspection-bottleneck-copilot-v01
+Final Inspection Bottleneck Copilot v0.2
+GitHub: https://github.com/GTdbZ/final-inspection-bottleneck-copilot
 
 這是我用 100% synthetic data 做的 PCB 製造資料分析作品集。  
 我用 Python / pandas 建立 PCB lot defect log，計算 lot、station、shift 層級的 defect rate，並輸出 station_summary、shift_summary 和缺陷率圖表。  

@@ -2,7 +2,7 @@
 
 ## 1. Project Introduction
 
-這個作品是 Final Inspection Bottleneck Copilot v0.1。
+這個作品是 Final Inspection Bottleneck Copilot v0.2。
 
 我用 100% synthetic PCB 終檢資料，建立一個簡單的製造資料分析流程，目標是用 Python 和 pandas 分析 lot、station、shift 的 defect rate，並初步找出可能的 bottleneck station。
 
@@ -38,7 +38,7 @@ defect_rate = defect_qty / input_qty
 
 同時，Final Inspection 的 delay_hours 也比 AOI 高。
 
-所以在 v0.1 版本裡，我初步判斷 Final Inspection 是 bottleneck candidate。
+所以在 v0.2 版本裡，我初步判斷 Final Inspection 是 bottleneck candidate。
 
 另外，shift 分析顯示 Night shift 的 defect rate 是 7.56%，高於 Day shift 的 5.11%，因此 Night shift 也可以被標記為高風險班別。
 
@@ -59,6 +59,7 @@ defect_rate = defect_qty / input_qty
 
 ## 6. Next Step
 
-下一版我會加入更多 synthetic lot data，並加入 defect_type Pareto chart，讓分析更接近實際製造現場的異常分類。
+v0.2 已加入 synthetic mock datasets、station / shift summary 與 defect_type ranking chart，讓分析更接近製造現場常見的異常分類與瓶頸判讀。
 
-v0.1 目前先聚焦在可解釋、可展示、可口頭說明的最小版本。
+v0.2 目前先聚焦在可解釋、可展示、可口頭說明的最小版本。
+

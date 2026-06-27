@@ -1,4 +1,4 @@
-# Final Inspection Bottleneck Copilot v0.1
+# Final Inspection Bottleneck Copilot v0.2
 
 ## Project Overview
 
@@ -18,7 +18,7 @@ In PCB manufacturing, final inspection and AOI data can be used to monitor:
 - Delay hours
 - Potential bottleneck station
 
-This v0.1 project focuses on a simple but explainable workflow:
+This v0.2 project focuses on a simple but explainable workflow:
 
 Synthetic lot data → pandas DataFrame → defect rate calculation → station / shift summary → chart → bottleneck candidate.
 
@@ -54,3 +54,4 @@ This project generates chart outputs under the `reports/` folder:
 - `station_defect_rate_chart.png`: compares station-level defect rates.
 
 All charts are generated from synthetic mock final inspection data only. No company, customer, product, yield, capacity, or internal production data is used.
+
