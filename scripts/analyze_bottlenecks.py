@@ -1,126 +1,108 @@
-#!/usr/bin/env python3
-"""
-Final Inspection Bottleneck Copilot - Initial Analysis Script
-Analyzes synthetic final inspection records to locate bottleneck stations and defect patterns.
-"""
+from pathlib import Path
 
-import os
-import sys
+import pandas as pd
 
-# 1. Error handling: Check for pandas
-try:
-    import pandas as pd
-except ImportError:
-    print("-" * 60)
-    print("Error: The 'pandas' package is not installed.")
-    print("Please install pandas to run this analysis by running:")
-    print("  pip install pandas")
-    print("-" * 60)
-    sys.exit(1)
 
-def main():
-    # 2. Error handling: Check if the CSV file exists
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    csv_path = os.path.normpath(os.path.join(script_dir, '..', 'mock_data', 'final_inspection_sample.csv'))
+REQUIRED_COLUMNS = {
+    "lot_id",
+    "station",
+    "defect_type",
+    "inspected_qty",
+    "defect_qty",
+    "delay_hours",
+}
 
-    if not os.path.exists(csv_path):
-        print(f"Error: The target CSV data file was not found at: {csv_path}")
-        print("Please ensure the synthetic CSV mock data is placed in the mock_data/ directory.")
-        sys.exit(1)
+STATION_ORDER = ["AOI", "Final Inspection"]
 
-    # Load dataset
-    try:
-        df = pd.read_csv(csv_path)
-    except Exception as e:
-        print(f"Error reading the CSV file: {e}")
-        sys.exit(1)
 
-    # 3. Error handling: Check for required columns
-    required_columns = {'lot_id', 'date', 'station', 'wait_time_min', 'defect_type', 'operator_group', 'rework_flag'}
-    missing_columns = required_columns - set(df.columns)
+def find_input_csv(repo_root: Path) -> Path:
+    mock_data_dir = repo_root / "mock_data"
+
+    if not mock_data_dir.exists():
+        raise FileNotFoundError("mock_data directory was not found.")
+
+    for csv_path in sorted(mock_data_dir.glob("*.csv")):
+        sample = pd.read_csv(csv_path, nrows=5)
+        if REQUIRED_COLUMNS.issubset(sample.columns):
+            return csv_path
+
+    raise FileNotFoundError(
+        "No synthetic CSV file with the required v0.2 schema was found in mock_data."
+    )
+
+
+def main() -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    reports_dir = repo_root / "reports"
+    reports_dir.mkdir(exist_ok=True)
+
+    input_csv = find_input_csv(repo_root)
+    df = pd.read_csv(input_csv)
+
+    missing_columns = REQUIRED_COLUMNS - set(df.columns)
     if missing_columns:
-        print(f"Error: The dataset at {csv_path} is missing required columns:")
-        for col in sorted(missing_columns):
-            print(f"  - {col}")
-        sys.exit(1)
+        raise ValueError(f"Missing required columns: {sorted(missing_columns)}")
 
-    print("=" * 60)
-    print(" FINAL INSPECTION BOTTLENECK COPILOT - DATA ANALYSIS REPORT")
-    print("=" * 60)
-    print(f"Dataset path: {csv_path}")
-    print(f"Total records analyzed: {len(df)}\n")
+    df["defect_rate"] = df["defect_qty"] / df["inspected_qty"]
 
-    # 1. Average wait_time_min by station, sorted descending
-    print("1. Average Wait Time by Station (Minutes)")
-    print("-" * 42)
-    avg_wait = df.groupby('station')['wait_time_min'].mean().sort_values(ascending=False)
-    for station, time in avg_wait.items():
-        print(f"  {station:<15} : {time:>6.1f} min")
-    print()
+    station_summary = (
+        df.groupby("station", as_index=False)
+        .agg(
+            inspected_qty=("inspected_qty", "sum"),
+            defect_qty=("defect_qty", "sum"),
+            avg_delay_hours=("delay_hours", "mean"),
+        )
+        .assign(defect_rate=lambda data: data["defect_qty"] / data["inspected_qty"])
+    )
 
-    # 2. Top defect_type counts, excluding blank values
-    print("2. Top Defect Types (Excluding Passes)")
-    print("-" * 42)
-    # Exclude nulls/NaNs and strings representing 'None' or empty
-    defects = df['defect_type'].dropna()
-    defects = defects[defects.astype(str).str.strip().str.lower().replace({'none': '', 'nan': ''}) != '']
-    defect_counts = defects.value_counts()
-    if not defect_counts.empty:
-        for defect, count in defect_counts.items():
-            print(f"  {defect:<15} : {count:>5} occurrences")
-    else:
-        print("  No defects recorded.")
-    print()
+    station_summary["station"] = pd.Categorical(
+        station_summary["station"],
+        categories=STATION_ORDER,
+        ordered=True,
+    )
+    station_summary = station_summary.sort_values("station")
 
-    # 3. Rework rate by station
-    print("3. Rework Rate by Station")
-    print("-" * 42)
-    rework_rate = df.groupby('station')['rework_flag'].mean().sort_values(ascending=False)
-    for station, rate in rework_rate.items():
-        print(f"  {station:<15} : {rate:>6.1%} rework rate")
-    print()
+    defect_summary = (
+        df.groupby("defect_type", as_index=False)
+        .agg(defect_qty=("defect_qty", "sum"))
+        .sort_values("defect_qty", ascending=False)
+    )
 
-    # 4. Station with highest average wait time
-    highest_wait_station = avg_wait.index[0]
-    highest_wait_time = avg_wait.iloc[0]
-    print("4. Maximum Bottleneck Station")
-    print("-" * 42)
-    print(f"  Station '{highest_wait_station}' has the highest average queue delay of {highest_wait_time:.1f} minutes.\n")
+    bottleneck_station = station_summary.sort_values(
+        "avg_delay_hours", ascending=False
+    ).iloc[0]
 
-    # 5. Recommendation based on synthetic mock data
-    print("5. Copilot Recommendations")
-    print("-" * 42)
-    print(f"  * BOTTLENECK ALERT: [{highest_wait_station}] is the primary queue bottleneck with {highest_wait_time:.1f} min avg wait time.")
-    
-    # Custom rule-based tips based on the synthetic data values
-    if highest_wait_station == 'FI-Recheck':
-        print("    Recommendation: FI-Recheck processes rework loops. High queue delays here point to either")
-        print("    operator capacity constraints in re-inspection or prolonged diagnostic/rework processing.")
-        print("    Action: Allocate additional Group-B/C operators to FI-Recheck to resolve the backlog.")
-    elif highest_wait_station == 'FI-AOI':
-        print("    Recommendation: FI-AOI is automated optical inspection. Excessive wait times indicate automated")
-        print("    machine queues are backlogged, possibly due to false-alarm rate spikes or lot batching.")
-        print("    Action: Run calibration checks on AOI sensors to reduce false calls.")
-    else:
-        print("    Recommendation: Review resource allocation and queue patterns at the bottleneck station.")
-        print("    Action: Adjust shifts/operator balance.")
+    output_path = reports_dir / "analysis_summary.txt"
 
-    # Defect specific recommendation
-    if not defect_counts.empty:
-        top_defect = defect_counts.index[0]
-        print(f"  * QUALITY INSIGHT: '{top_defect}' is the most frequent defect ({defect_counts.iloc[0]} occurrences).")
-        if top_defect in ['scratch', 'cosmetic_ng']:
-            print("    Action: Inspect handling trays and mechanical conveyor belts for abrasion surfaces.")
-        elif top_defect in ['contamination']:
-            print("    Action: Check cleanroom filters, air showers, and worker gowning compliance.")
-        elif top_defect in ['open_short']:
-            print("    Action: Verify solder paste deposition parameters and stencil alignment.")
-        elif top_defect in ['label_error']:
-            print("    Action: Inspect printing/labeling machine alignment and barcode scanners.")
-        elif top_defect in ['dimension_ng']:
-            print("    Action: Recalibrate pick-and-place components or inspection camera offsets.")
-            
-    print("=" * 60)
+    with output_path.open("w", encoding="utf-8") as report:
+        report.write("Final Inspection Bottleneck Copilot - Analysis Summary\n")
+        report.write("=" * 58 + "\n\n")
+        report.write("Data safety statement:\n")
+        report.write("- Synthetic or mock data only\n")
+        report.write("- No company data\n")
+        report.write("- No customer names\n")
+        report.write("- No product names or part numbers\n")
+        report.write("- No real yield or capacity data\n")
+        report.write("- No internal production data\n\n")
 
-if __name__ == '__main__':
+        report.write(f"Input file: {input_csv.relative_to(repo_root)}\n\n")
+
+        report.write("Station summary:\n")
+        report.write(station_summary.to_string(index=False))
+        report.write("\n\n")
+
+        report.write("Defect type ranking:\n")
+        report.write(defect_summary.to_string(index=False))
+        report.write("\n\n")
+
+        report.write("Bottleneck proxy:\n")
+        report.write(
+            f"- {bottleneck_station['station']} has the highest average "
+            f"delay_hours value at {bottleneck_station['avg_delay_hours']:.2f} hours.\n"
+        )
+
+    print(f"Analysis summary written to {output_path.relative_to(repo_root)}")
+
+
+if __name__ == "__main__":
     main()

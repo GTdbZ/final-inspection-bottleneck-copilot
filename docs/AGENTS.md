@@ -1,41 +1,52 @@
-# Agent Instructions & Guidelines
+# Agent Guide
 
-This document outlines the context, rules, and guidelines for AI agents working on the Final Inspection Bottleneck Copilot project.
+This project is a portfolio-oriented analysis copilot for synthetic PCB final inspection bottleneck analysis.
 
-## Project Goal
-Build a manufacturing analytics assistant using synthetic final-inspection data to identify bottleneck stations, defect trends, waiting-time issues, and suggested next actions.
+## Scope
 
-## Hard Constraints
-- **Confidentiality:** Do not use confidential company data, real customer names, real part numbers, internal factory reports, or real company files.
-- **Data Source:** Use only synthetic mock data.
-- **Environment:** Do not install MCP servers. Do not deploy anything. Do not create or use API keys.
-- **Scope:** Do not modify files outside the current workspace.
+The current project version focuses on:
 
-## Static Context
-- **Project Structure:**
-  - `docs/AGENTS.md`: Agent behavior rules and project constraints.
-  - `docs/data_schema.md`: Definition of fields in the final inspection dataset.
-  - `docs/project_brief.md`: Project summary, goals, and workflow context.
-  - `mock_data/final_inspection_sample.csv`: Synthetic dataset containing final-inspection records.
-- **Inspection Stations:**
-  - `FI-AOI` (Automated Optical Inspection)
-  - `FI-VI` (Visual Inspection)
-  - `FI-Packing` (Final Packing)
-  - `FI-Recheck` (Quality Recheck)
-- **Defect Types:**
-  - `scratch`, `contamination`, `open_short`, `label_error`, `dimension_ng`, `cosmetic_ng`
+- Synthetic PCB inspection data
+- AOI and Final Inspection station comparison
+- Defect type ranking
+- Delay analysis using delay_hours
+- Simple reproducible charts for portfolio demonstration
 
-## Dynamic Context
-- Any analytical scripts (e.g., pandas Jupyter notebooks, Python scripts) added to the repository should leverage the schema defined in `docs/data_schema.md` and read from `mock_data/final_inspection_sample.csv`.
-- Future extensions may include local dashboards (e.g., Streamlit) or reporting scripts.
+## Agent Rules
 
-## Guardrails
-- **Data Integrity:** Never append real production data to the CSV files. All modifications to mock data must adhere to the synthetic format.
-- **Security:** Do not check in any API keys, credentials, or sensitive environmental variables.
-- **System Boundaries:** Any operations must run locally. Do not attempt external API integrations or cloud deployments.
+Any AI assistant or automation tool working on this repository must follow these rules:
 
-## Preferred Workflow
-1. **Analyze:** Inspect existing data schema and mock data files.
-2. **Prototype:** Create isolated Python scripts or notebooks for data analysis.
-3. **Verify:** Test code locally with the synthetic dataset.
-4. **Document:** Keep documentation, walkthroughs, and schema updated.
+1. Use synthetic or mock data only.
+2. Do not use company data.
+3. Do not use customer names.
+4. Do not use product names or part numbers.
+5. Do not use real yield data.
+6. Do not use real capacity data.
+7. Do not use internal production data.
+8. Do not use API keys, passwords, tokens, credentials, or private configuration files.
+9. Do not reference local personal paths.
+10. Keep changes small, reviewable, and aligned with the current synthetic data schema.
+
+## Current Data Columns
+
+The current synthetic dataset is expected to include:
+
+- lot_id
+- station
+- defect_type
+- inspected_qty
+- defect_qty
+- delay_hours
+
+## Current Station Values
+
+The current station values are:
+
+- AOI
+- Final Inspection
+
+## Safe Development Notes
+
+This repository is intended for public portfolio demonstration.
+
+All charts, reports, and analysis outputs must be reproducible from synthetic or mock data stored in this repository. No confidential manufacturing information should be added.
