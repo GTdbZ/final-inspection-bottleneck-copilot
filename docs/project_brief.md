@@ -6,49 +6,33 @@ Final Inspection Bottleneck Copilot
 
 ## Goal
 
-This project demonstrates a small AI-assisted manufacturing data analysis workflow using Python, pandas, and synthetic PCB inspection data.
-
-The goal is to show how a portfolio project can identify inspection bottleneck signals, summarize defect patterns, and generate simple visual outputs without using confidential data.
+Build a small, explainable manufacturing analytics workflow that converts synthetic inspection records into station/shift summaries, defect-rate metrics, bottleneck signals, and reproducible visual outputs.
 
 ## Current Scope
 
-The current scope includes:
-
-- Reading synthetic PCB inspection data
-- Calculating defect rates
-- Comparing AOI and Final Inspection
-- Ranking synthetic defect types
-- Using delay_hours as a bottleneck proxy
-- Generating chart outputs for portfolio review
+- Read synthetic inspection data
+- Validate required columns and basic quantity constraints
+- Calculate weighted defect rates
+- Compare example inspection stations
+- Compare Day/Night shifts
+- Rank synthetic defect categories
+- Use `delay_hours` as a simple bottleneck proxy
+- Generate text and chart outputs for portfolio review
 
 ## Outputs
 
-The project generates chart outputs such as:
+The project generates:
 
-- defect type ranking
-- delay by station
-- station defect rate comparison
+- station-level defect-rate comparison
+- shift-level defect-rate comparison in the analysis summary
+- defect-type ranking
+- delay-hours comparison by station
+- reproducible chart files under `reports/`
 
 ## Data Safety
 
-This project is designed for public portfolio use.
-
-It uses synthetic or mock data only and must not include:
-
-- company data
-- customer names
-- product names
-- part numbers
-- real yield data
-- real capacity data
-- internal production data
-- API keys
-- passwords
-- tokens
-- credentials
+This project is designed for public portfolio use and uses synthetic/mock data only. No company, customer, product, real yield/capacity, internal production, or credential data should be added.
 
 ## Portfolio Positioning
 
-This project is positioned as a compact manufacturing analytics capstone.
-
-It connects the user's PCB background with entry-level AI, data analysis, and automation skills while keeping the dataset safe, public, and reproducible.
+This is a compact manufacturing analytics project focused on explainability, reproducibility, data safety, and clear engineering trade-offs. It is intentionally kept generic so the workflow can be discussed across manufacturing contexts rather than being tied to one specific factory or process.

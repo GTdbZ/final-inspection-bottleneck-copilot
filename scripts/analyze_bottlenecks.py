@@ -6,16 +6,17 @@ import pandas as pd
 REQUIRED_COLUMNS = {
     "lot_id",
     "station",
-    "defect_type",
-    "inspected_qty",
+    "shift",
+    "input_qty",
     "defect_qty",
+    "defect_type",
     "delay_hours",
 }
-
 STATION_ORDER = ["AOI", "Final Inspection"]
 
 
 def find_input_csv(repo_root: Path) -> Path:
+    """Locate the synthetic defect log by schema rather than by a hard-coded path."""
     mock_data_dir = repo_root / "mock_data"
 
     if not mock_data_dir.exists():
@@ -27,8 +28,37 @@ def find_input_csv(repo_root: Path) -> Path:
             return csv_path
 
     raise FileNotFoundError(
-        "No synthetic CSV file with the required v0.2 schema was found in mock_data."
+        "No synthetic CSV file with the required schema was found in mock_data."
     )
+
+
+def validate_data(df: pd.DataFrame) -> None:
+    missing_columns = REQUIRED_COLUMNS - set(df.columns)
+    if missing_columns:
+        raise ValueError(f"Missing required columns: {sorted(missing_columns)}")
+
+    if (df["input_qty"] <= 0).any():
+        raise ValueError("input_qty must be greater than 0 for every row.")
+    if (df["defect_qty"] < 0).any():
+        raise ValueError("defect_qty cannot be negative.")
+    if (df["defect_qty"] > df["input_qty"]).any():
+        raise ValueError("defect_qty cannot exceed input_qty.")
+    if (df["delay_hours"] < 0).any():
+        raise ValueError("delay_hours cannot be negative.")
+
+
+def build_group_summary(df: pd.DataFrame, group_col: str) -> pd.DataFrame:
+    summary = (
+        df.groupby(group_col, as_index=False)
+        .agg(
+            input_qty=("input_qty", "sum"),
+            defect_qty=("defect_qty", "sum"),
+            delay_hours=("delay_hours", "sum"),
+        )
+        .assign(defect_rate=lambda data: data["defect_qty"] / data["input_qty"])
+    )
+    summary["defect_rate_percent"] = summary["defect_rate"] * 100
+    return summary
 
 
 def main() -> None:
@@ -38,29 +68,17 @@ def main() -> None:
 
     input_csv = find_input_csv(repo_root)
     df = pd.read_csv(input_csv)
+    validate_data(df)
 
-    missing_columns = REQUIRED_COLUMNS - set(df.columns)
-    if missing_columns:
-        raise ValueError(f"Missing required columns: {sorted(missing_columns)}")
-
-    df["defect_rate"] = df["defect_qty"] / df["inspected_qty"]
-
-    station_summary = (
-        df.groupby("station", as_index=False)
-        .agg(
-            inspected_qty=("inspected_qty", "sum"),
-            defect_qty=("defect_qty", "sum"),
-            avg_delay_hours=("delay_hours", "mean"),
-        )
-        .assign(defect_rate=lambda data: data["defect_qty"] / data["inspected_qty"])
-    )
-
+    station_summary = build_group_summary(df, "station")
     station_summary["station"] = pd.Categorical(
-        station_summary["station"],
-        categories=STATION_ORDER,
-        ordered=True,
+        station_summary["station"], categories=STATION_ORDER, ordered=True
     )
     station_summary = station_summary.sort_values("station")
+
+    shift_summary = build_group_summary(df, "shift").sort_values(
+        "defect_rate", ascending=False
+    )
 
     defect_summary = (
         df.groupby("defect_type", as_index=False)
@@ -69,26 +87,25 @@ def main() -> None:
     )
 
     bottleneck_station = station_summary.sort_values(
-        "avg_delay_hours", ascending=False
+        "delay_hours", ascending=False
     ).iloc[0]
 
     output_path = reports_dir / "analysis_summary.txt"
-
     with output_path.open("w", encoding="utf-8") as report:
         report.write("Final Inspection Bottleneck Copilot - Analysis Summary\n")
         report.write("=" * 58 + "\n\n")
         report.write("Data safety statement:\n")
-        report.write("- Synthetic or mock data only\n")
-        report.write("- No company data\n")
-        report.write("- No customer names\n")
-        report.write("- No product names or part numbers\n")
-        report.write("- No real yield or capacity data\n")
-        report.write("- No internal production data\n\n")
-
+        report.write("- Synthetic/mock data only\n")
+        report.write("- No company/customer/product data\n")
+        report.write("- No real yield, capacity, or internal production data\n\n")
         report.write(f"Input file: {input_csv.relative_to(repo_root)}\n\n")
 
         report.write("Station summary:\n")
         report.write(station_summary.to_string(index=False))
+        report.write("\n\n")
+
+        report.write("Shift summary (highest defect rate first):\n")
+        report.write(shift_summary.to_string(index=False))
         report.write("\n\n")
 
         report.write("Defect type ranking:\n")
@@ -97,9 +114,10 @@ def main() -> None:
 
         report.write("Bottleneck proxy:\n")
         report.write(
-            f"- {bottleneck_station['station']} has the highest average "
-            f"delay_hours value at {bottleneck_station['avg_delay_hours']:.2f} hours.\n"
+            f"- {bottleneck_station['station']} has the highest total "
+            f"synthetic delay_hours value at {bottleneck_station['delay_hours']:.2f} hours.\n"
         )
+        report.write("- This is a demonstration proxy, not a causal conclusion.\n")
 
     print(f"Analysis summary written to {output_path.relative_to(repo_root)}")
 

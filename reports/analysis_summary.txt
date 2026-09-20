@@ -1,0 +1,30 @@
+Final Inspection Bottleneck Copilot - Analysis Summary
+==========================================================
+
+Data safety statement:
+- Synthetic/mock data only
+- No company/customer/product data
+- No real yield, capacity, or internal production data
+
+Input file: mock_data/synthetic_defect_log.csv
+
+Station summary:
+         station  input_qty  defect_qty  delay_hours  defect_rate  defect_rate_percent
+             AOI       1400          74          2.5     0.052857             5.285714
+Final Inspection       2200         154          7.5     0.070000             7.000000
+
+Shift summary (highest defect rate first):
+shift  input_qty  defect_qty  delay_hours  defect_rate  defect_rate_percent
+Night       1800         136          5.5     0.075556             7.555556
+  Day       1800          92          4.5     0.051111             5.111111
+
+Defect type ranking:
+defect_type  defect_qty
+       dent          80
+    scratch          74
+       open          56
+      short          18
+
+Bottleneck proxy:
+- Final Inspection has the highest total synthetic delay_hours value at 7.50 hours.
+- This is a demonstration proxy, not a causal conclusion.

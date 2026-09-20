@@ -1,56 +1,125 @@
 # Final Inspection Bottleneck Copilot v0.2
 
-## Project Overview
+A small, reproducible manufacturing analytics portfolio project built with Python, pandas, matplotlib, and 100% synthetic inspection data.
 
-This project is a beginner-friendly PCB manufacturing data analysis portfolio project.
+The project turns lot-level inspection records into station/shift summaries, defect-rate metrics, bottleneck signals, and simple charts that can be reviewed without access to any company data.
 
-The goal is to use Python, pandas, and AI-assisted development to analyze synthetic PCB final inspection data and identify possible bottleneck signals.
+## What This Project Demonstrates
 
-This project uses 100% synthetic data. No company data or confidential manufacturing data is used.
+- Loading and validating structured manufacturing data with pandas
+- Calculating weighted defect rates correctly from quantity totals
+- Comparing station- and shift-level performance
+- Using `delay_hours` as a simple bottleneck proxy
+- Ranking defect categories
+- Generating reproducible CSV/text summaries and charts
+- Keeping public portfolio data synthetic and free of confidential information
 
-## Background
+## Workflow
 
-In PCB manufacturing, final inspection and AOI data can be used to monitor:
+```text
+Synthetic inspection data
+        ↓
+Schema / value validation
+        ↓
+Station + shift aggregation
+        ↓
+Defect-rate calculation
+        ↓
+Bottleneck proxy + defect ranking
+        ↓
+Text summary + charts
+```
 
-- Lot-level defect rate
-- Station-level defect trend
-- Shift-level risk
-- Delay hours
-- Potential bottleneck station
+## Included Synthetic Example
 
-This v0.2 project focuses on a simple but explainable workflow:
+The sample dataset uses two example inspection stations (`AOI` and `Final Inspection`) and Day/Night shifts.
 
-Synthetic lot data → pandas DataFrame → defect rate calculation → station / shift summary → chart → bottleneck candidate.
+From the included synthetic dataset:
 
-## Dataset
+- AOI defect rate: **5.29%**
+- Final Inspection defect rate: **7.00%**
+- Day-shift defect rate: **5.11%**
+- Night-shift defect rate: **7.56%**
+- Final Inspection also has the highest total synthetic `delay_hours` value in this example
 
-The synthetic dataset includes the following fields:
+These values are demonstration outputs only. They are not real factory benchmarks or production results.
 
-- lot_id
-- station
-- shift
-- input_qty
-- defect_qty
-- defect_type
-- delay_hours
-- defect_rate
-- defect_rate_percent
-- defect_rate_label
+## Repository Structure
 
-## Formula
+```text
+final-inspection-bottleneck-copilot/
+├─ analysis.ipynb
+├─ requirements.txt
+├─ mock_data/
+│  ├─ synthetic_defect_log.csv
+│  ├─ station_summary.csv
+│  └─ shift_summary.csv
+├─ scripts/
+│  ├─ analyze_bottlenecks.py
+│  └─ generate_charts.py
+├─ reports/
+│  ├─ analysis_summary.txt
+│  ├─ delay_hours_by_station.png
+│  ├─ defect_type_ranking.png
+│  └─ station_defect_rate_chart.png
+└─ docs/
+```
 
-The basic defect rate formula is:
+## Quick Start
+
+```bash
+python -m venv .venv
+```
+
+Activate the environment, then install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run the text analysis:
+
+```bash
+python scripts/analyze_bottlenecks.py
+```
+
+Generate charts:
+
+```bash
+python scripts/generate_charts.py
+```
+
+## Core Formula
 
 ```python
 defect_rate = defect_qty / input_qty
-defect_rate_percent = defect_rate * 100
 ```
-## Chart Outputs
 
-This project generates chart outputs under the `reports/` folder:
+For station/shift summaries, the rate is recalculated from aggregated quantities rather than averaging row-level percentages:
 
-- `delay_hours_by_station.png`: compares total delay hours by station as a bottleneck proxy.
-- `defect_type_ranking.png`: ranks defect types by total defect quantity.
-- `station_defect_rate_chart.png`: compares station-level defect rates.
+```python
+summary_defect_rate = sum(defect_qty) / sum(input_qty)
+```
 
-All charts are generated from synthetic mock final inspection data only. No company, customer, product, yield, capacity, or internal production data is used.
+## Data Safety
+
+This repository uses **synthetic/mock data only**. It does not contain:
+
+- company or customer data
+- product names or part numbers
+- real yield, capacity, or production records
+- internal process parameters
+- API keys, tokens, passwords, or credentials
+
+## Limitations
+
+This is a portfolio-scale analytics prototype, not a production monitoring system or predictive AI model.
+
+- The dataset is intentionally small and synthetic.
+- `delay_hours` is used only as a simple bottleneck proxy.
+- No causal inference or production-grade alerting is implemented.
+- The results should not be interpreted as real manufacturing performance.
+
+## Development Note
+
+AI tools were used as coding/review aids during development. The analysis itself is deterministic and inspectable in the repository scripts and notebook.

@@ -1,52 +1,43 @@
 # Agent Guide
 
-This project is a portfolio-oriented analysis copilot for synthetic PCB final inspection bottleneck analysis.
+This repository is a portfolio-oriented analytics project for synthetic manufacturing inspection and bottleneck analysis.
 
 ## Scope
 
-The current project version focuses on:
+The current version focuses on:
 
-- Synthetic PCB inspection data
-- AOI and Final Inspection station comparison
-- Defect type ranking
-- Delay analysis using delay_hours
-- Simple reproducible charts for portfolio demonstration
+- synthetic inspection data
+- example station and shift comparisons
+- defect-type ranking
+- delay analysis using `delay_hours`
+- simple reproducible charts and text summaries
 
 ## Agent Rules
 
-Any AI assistant or automation tool working on this repository must follow these rules:
+Any AI assistant or automation tool working on this repository must:
 
 1. Use synthetic or mock data only.
-2. Do not use company data.
-3. Do not use customer names.
-4. Do not use product names or part numbers.
-5. Do not use real yield data.
-6. Do not use real capacity data.
-7. Do not use internal production data.
-8. Do not use API keys, passwords, tokens, credentials, or private configuration files.
-9. Do not reference local personal paths.
-10. Keep changes small, reviewable, and aligned with the current synthetic data schema.
+2. Never add company, customer, product, part-number, real yield/capacity, or internal production data.
+3. Never add API keys, passwords, tokens, credentials, or private configuration files.
+4. Avoid local personal paths in committed files.
+5. Keep changes small, reviewable, and reproducible.
+6. Preserve the generic manufacturing positioning unless the owner explicitly changes the project scope.
 
-## Current Data Columns
-
-The current synthetic dataset is expected to include:
+## Required Data Columns
 
 - lot_id
 - station
-- defect_type
-- inspected_qty
+- shift
+- input_qty
 - defect_qty
+- defect_type
 - delay_hours
 
-## Current Station Values
-
-The current station values are:
+## Example Station Values
 
 - AOI
 - Final Inspection
 
 ## Safe Development Notes
 
-This repository is intended for public portfolio demonstration.
-
-All charts, reports, and analysis outputs must be reproducible from synthetic or mock data stored in this repository. No confidential manufacturing information should be added.
+All charts, reports, and analysis outputs must be reproducible from synthetic/mock data stored in this repository. The repository is intended for public portfolio demonstration and should remain safe to publish.
